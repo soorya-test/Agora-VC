@@ -22,6 +22,7 @@ const initialState = {
   leaveChannel: () => {},
   otherJoinee: [] as number[],
   isJoined: false,
+  message: "",
 };
 
 export const agoraContext = createContext(initialState);
