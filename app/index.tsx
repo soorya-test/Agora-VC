@@ -19,7 +19,7 @@ export default function HomePage() {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <View style={styles.main}>
-        {!isJoined ? (
+        {isJoined ? (
           <TouchableOpacity onPress={leaveChannel} style={styles.container}>
             <View style={styles.button}>
               <MaterialCommunityIcons
@@ -85,7 +85,7 @@ const generateStyles = (isDark: boolean) =>
       gap: 16,
     },
     toast: {
-      width: "85%",
+      width: "90%",
       flexDirection: "row",
       height: 48,
       borderWidth: 2,
@@ -115,7 +115,6 @@ const generateStyles = (isDark: boolean) =>
       color: isDark ? "black" : "white",
       textAlign: "left",
       alignSelf: "center",
-      fontFamily: "SpaceMono",
     },
     head: {
       fontSize: 25,
@@ -132,5 +131,6 @@ const generateStyles = (isDark: boolean) =>
       fontSize: 20,
       color: isDark ? "white" : "black",
       textAlign: "left",
+      fontFamily: "SpaceMono",
     },
   });
