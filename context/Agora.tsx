@@ -15,9 +15,9 @@ import createAgoraRtcEngine, {
 import { getAudioPermission } from "@/utils/permissions";
 
 const appId = process.env.EXPO_PUBLIC_APP_ID;
-const token = "";
+const token = process.env.EXPO_PUBLIC_AGORA_TOKEN!;
 const channelName = "main";
-const uid = Math.floor(Math.random() * (Math.pow(2, 32) - 1));
+const userId = Math.floor(Math.random() * 10_000_000);
 
 const initialState = {
   joinChannel: () => {},
@@ -25,6 +25,7 @@ const initialState = {
   otherJoinee: [] as number[],
   isJoined: false,
   message: "",
+  userId,
 };
 
 export const agoraContext = createContext(initialState);
@@ -54,25 +55,11 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
       agoraEngine.registerEventHandler({
         onError: (_, err) => setMessage(err),
         onUserJoined: (_, uid) => {
-          const uidString = uid.toString();
-          const uidLength = uidString.length;
-          setMessage(
-            `User ${uidString.substring(0, 3)}....${uidString.substring(
-              uidLength - 3,
-              uidLength
-            )} has joined`
-          );
+          setMessage(`User ${uid} has joined`);
           setOtherJoinee((prev) => [...prev, uid]);
         },
         onUserOffline: (_, uid) => {
-          const uidString = uid.toString();
-          const uidLength = uidString.length;
-          setMessage(
-            `User ${uidString.substring(0, 3)}....${uidString.substring(
-              uidLength - 3,
-              uidLength
-            )} has left`
-          );
+          setMessage(`User ${uid} has left`);
           setOtherJoinee((prev) => prev.filter((id) => id != uid));
         },
       });
@@ -90,11 +77,12 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
   const joinChannel = () => {
     try {
       agoraEngineRef.current?.setChannelProfile(
-        ChannelProfileType.ChannelProfileCommunication
+        ChannelProfileType.ChannelProfileLiveBroadcasting
       );
-      agoraEngineRef.current?.joinChannel(token, channelName, uid, {
+      agoraEngineRef.current?.joinChannel(token, channelName, userId, {
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
       });
+      setOtherJoinee((prev) => [...prev, userId]);
       setIsJoined(true);
       setMessage(`Successfully joined ${channelName}`);
     } catch (err) {
@@ -119,7 +107,14 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <agoraContext.Provider
-      value={{ isJoined, joinChannel, leaveChannel, message, otherJoinee }}
+      value={{
+        isJoined,
+        joinChannel,
+        leaveChannel,
+        message,
+        otherJoinee,
+        userId,
+      }}
     >
       {children}
     </agoraContext.Provider>

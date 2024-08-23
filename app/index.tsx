@@ -13,12 +13,18 @@ import { useAgora } from "@/hooks/use-agora";
 
 export default function HomePage() {
   const { dark: isDark } = useTheme();
-  const { message, isJoined, joinChannel, leaveChannel, otherJoinee } =
+  const { message, isJoined, joinChannel, leaveChannel, otherJoinee, userId } =
     useAgora();
   const styles = generateStyles(isDark);
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <View style={styles.main}>
+        <View>
+          <Text style={styles.head}>Your ID</Text>
+          <Text style={{ ...styles.head, fontFamily: "SpaceMono" }}>
+            {userId}
+          </Text>
+        </View>
         {isJoined ? (
           <TouchableOpacity onPress={leaveChannel} style={styles.container}>
             <View style={styles.button}>
@@ -64,9 +70,8 @@ export default function HomePage() {
             (j, idx) =>
               j && (
                 <Text style={styles.text} key={idx}>
-                  {`${idx + 1}. ${j.toString().substring(0, 3)}....${j
-                    .toString()
-                    .substring(j.toString().length - 3, j.toString().length)}`}
+                  {`${idx + 1}.`}
+                  <Text style={{ fontFamily: "SpaceMono" }}>{`${j}`}</Text>
                 </Text>
               )
           )}
