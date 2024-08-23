@@ -52,10 +52,7 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
       const agoraEngine = agoraEngineRef.current;
 
       agoraEngine.registerEventHandler({
-        onJoinChannelSuccess: () => {
-          setMessage(`Successfully joined ${channelName}`);
-          setIsJoined(true);
-        },
+        onError: (_, err) => setMessage(err),
         onUserJoined: (_, uid) => {
           setMessage(`User ${uid} has joined`);
           setOtherJoinee((prev) => [...prev, uid]);
@@ -84,6 +81,8 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
       agoraEngineRef.current?.joinChannel(token, channelName, uid, {
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
       });
+      setIsJoined(true);
+      setMessage(`Successfully joined ${channelName}`);
     } catch (err) {
       console.log(err);
       // @ts-ignore
