@@ -32,6 +32,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a4b46c0b-714e-409f-953a-4a23bda81201"
+      }
+    },
+    "owner": "soorya-u"
   }
 }
