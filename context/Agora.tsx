@@ -54,7 +54,14 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
       agoraEngine.registerEventHandler({
         onError: (_, err) => setMessage(err),
         onUserJoined: (_, uid) => {
-          setMessage(`User ${uid} has joined`);
+          const uidString = uid.toString();
+          const uidLength = uidString.length;
+          setMessage(
+            `User ${uidString.substring(0, 3)}....${uidString.substring(
+              uidLength - 3,
+              uidLength
+            )} has joined`
+          );
           setOtherJoinee((prev) => [...prev, uid]);
         },
         onUserOffline: (_, uid) => {
