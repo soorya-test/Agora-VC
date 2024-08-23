@@ -65,7 +65,14 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
           setOtherJoinee((prev) => [...prev, uid]);
         },
         onUserOffline: (_, uid) => {
-          setMessage(`User ${uid} has left`);
+          const uidString = uid.toString();
+          const uidLength = uidString.length;
+          setMessage(
+            `User ${uidString.substring(0, 3)}....${uidString.substring(
+              uidLength - 3,
+              uidLength
+            )} has left`
+          );
           setOtherJoinee((prev) => prev.filter((id) => id != uid));
         },
       });
