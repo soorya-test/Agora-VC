@@ -18,8 +18,6 @@ import { getAgoraToken } from "@/lib/axios";
 const appId = process.env.EXPO_PUBLIC_APP_ID;
 const channelName = "main" as const;
 const uid = Math.floor(Math.random() * 10_000_000);
-const tempToken =
-  "007eJxTYIjJnrhm0gSZeQcvWpkV5r40XOF1xde6MT9Y//SOTSXnzkxUYDAwMkw2NTFIM002TTRJMzayNE1OMjc2SzM2SzYzNDROW3nzZFpDICOD5dFyZkYGCATxWRhyEzPzGBgAhVIggQ==";
 
 const initialState = {
   joinChannel: () => {},
@@ -93,7 +91,7 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
 
       const token = data.token;
 
-      agoraEngineRef.current?.joinChannel(tempToken, channelName, uid, {
+      agoraEngineRef.current?.joinChannel(token, channelName, uid, {
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
       });
       setOtherJoinee((prev) => getUniqueValues([...prev, uid]));
