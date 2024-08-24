@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Router } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 
@@ -14,7 +14,15 @@ const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE!;
 app.use(express.json());
 app.use(cors());
 
-app.get("/api/token", (req, res) => {
+const api = Router();
+
+api.get("/health", (_, res) => {
+  res.status(200).json({
+    status: true,
+  });
+});
+
+api.get("/token", (req, res) => {
   const channelName = "main";
   const userId = Number(req.query.userId);
   const expiry = 600; // 10 min
@@ -29,5 +37,7 @@ app.get("/api/token", (req, res) => {
 
   return res.status(200).json({ token });
 });
+
+app.use("/api", api);
 
 app.listen(PORT, () => console.log(`Server Started at PORT ${PORT}`));
