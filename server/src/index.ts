@@ -14,10 +14,10 @@ const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE!;
 app.use(express.json());
 app.use(cors());
 
-app.get("/api/rtc", (req, res) => {
+app.get("/api/token", (req, res) => {
   const channelName = "main";
   const userId = Number(req.query.userId);
-  const expiry = 600;
+  const expiry = 600; // 10 min
   const token = RtcTokenBuilder.buildTokenWithUid(
     APP_ID,
     APP_CERTIFICATE,
