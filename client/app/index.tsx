@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,8 +14,15 @@ import { useAgora } from "@/hooks/use-agora";
 
 export default function HomePage() {
   const { dark: isDark } = useTheme();
-  const { message, isJoined, joinChannel, leaveChannel, otherJoinee, userId } =
-    useAgora();
+  const {
+    message,
+    isJoined,
+    joinChannel,
+    leaveChannel,
+    otherJoinee,
+    userId,
+    loading,
+  } = useAgora();
   const styles = generateStyles(isDark);
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
@@ -25,35 +33,30 @@ export default function HomePage() {
             {userId}
           </Text>
         </View>
-        {isJoined ? (
-          <TouchableOpacity onPress={leaveChannel} style={styles.container}>
-            <View style={styles.button}>
-              <MaterialCommunityIcons
-                name="logout"
-                size={30}
-                color={isDark ? "black" : "white"}
-              />
-            </View>
-            <View>
-              <Text style={styles.buttonText}>Leave</Text>
-              <Text style={styles.buttonText}>Channel</Text>
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={joinChannel} style={styles.container}>
-            <View style={styles.button}>
-              <MaterialCommunityIcons
-                name="login"
-                size={30}
-                color={isDark ? "black" : "white"}
-              />
-            </View>
-            <View>
-              <Text style={styles.buttonText}>Join</Text>
-              <Text style={styles.buttonText}>Channel</Text>
-            </View>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          onPress={isJoined ? leaveChannel : joinChannel}
+          style={styles.container}
+        >
+          {loading ? (
+            <ActivityIndicator style={styles.loader} size="large" />
+          ) : (
+            <>
+              <View style={styles.button}>
+                <MaterialCommunityIcons
+                  name={isJoined ? "logout" : "login"}
+                  size={30}
+                  color={isDark ? "black" : "white"}
+                />
+              </View>
+              <View>
+                <Text style={styles.buttonText}>
+                  {isJoined ? "Leave" : "Join"}
+                </Text>
+                <Text style={styles.buttonText}>Channel</Text>
+              </View>
+            </>
+          )}
+        </TouchableOpacity>
         {message && (
           <View style={styles.toast}>
             <MaterialCommunityIcons
@@ -137,5 +140,9 @@ const generateStyles = (isDark: boolean) =>
       color: isDark ? "white" : "black",
       textAlign: "left",
       fontFamily: "SpaceMono",
+    },
+    loader: {
+      paddingHorizontal: 40,
+      paddingVertical: 6,
     },
   });

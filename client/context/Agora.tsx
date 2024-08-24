@@ -26,6 +26,7 @@ const initialState = {
   isJoined: false,
   message: "",
   userId,
+  loading: false,
 };
 
 export const agoraContext = createContext(initialState);
@@ -35,6 +36,7 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
   const [isJoined, setIsJoined] = useState(false);
   const [otherJoinee, setOtherJoinee] = useState<number[]>([]);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     initFunc();
@@ -74,6 +76,7 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
   };
 
   const joinChannel = async () => {
+    setLoading(true);
     try {
       agoraEngineRef.current?.setChannelProfile(
         ChannelProfileType.ChannelProfileLiveBroadcasting
@@ -92,10 +95,13 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
     } catch (err: any) {
       console.log(err);
       setMessage(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const leaveChannel = () => {
+    setLoading(true);
     try {
       agoraEngineRef.current?.leaveChannel();
       setOtherJoinee([]);
@@ -104,6 +110,8 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
     } catch (err: any) {
       console.log(err);
       setMessage(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,6 +124,7 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
         message,
         otherJoinee,
         userId,
+        loading,
       }}
     >
       {children}
