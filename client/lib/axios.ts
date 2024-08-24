@@ -4,12 +4,11 @@ const client = axios.create({
   baseURL: `${process.env.EXPO_PUBLIC_SERVER_URL}/api`,
 });
 
-export async function getAgoraToken(userId: number) {
+export async function getAgoraToken(uid: number) {
   try {
     const { data } = await client.get("/token", {
-      data: { userId },
+      params: { uid },
     });
-    console.log(data);
     return {
       data,
       error: null,

@@ -12,6 +12,7 @@ const APP_ID = process.env.AGORA_APP_ID!;
 const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE!;
 
 app.use(express.json());
+app.disable("x-powered-by");
 app.use(cors());
 
 const api = Router();
@@ -23,14 +24,15 @@ api.get("/health", (_, res) => {
 });
 
 api.get("/token", (req, res) => {
-  const channelName = "main";
-  const userId = Number(req.query.userId);
-  const expiry = 600; // 10 min
+  const channelName = "main" as const;
+  const uid = Number(req.query.uid);
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  const expiry = currentTimestamp + 3600;
   const token = RtcTokenBuilder.buildTokenWithUid(
     APP_ID,
     APP_CERTIFICATE,
     channelName,
-    userId,
+    uid,
     RtcRole.PUBLISHER,
     expiry
   );

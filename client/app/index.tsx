@@ -20,7 +20,7 @@ export default function HomePage() {
     joinChannel,
     leaveChannel,
     otherJoinee,
-    userId,
+    uid,
     loading,
   } = useAgora();
   const styles = generateStyles(isDark);
@@ -29,9 +29,7 @@ export default function HomePage() {
       <View style={styles.main}>
         <View>
           <Text style={styles.head}>Your ID</Text>
-          <Text style={{ ...styles.head, fontFamily: "SpaceMono" }}>
-            {userId}
-          </Text>
+          <Text style={{ ...styles.head, fontFamily: "SpaceMono" }}>{uid}</Text>
         </View>
         <TouchableOpacity
           onPress={isJoined ? leaveChannel : joinChannel}

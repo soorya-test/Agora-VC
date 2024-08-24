@@ -16,8 +16,10 @@ import { getAudioPermission } from "@/utils/permissions";
 import { getAgoraToken } from "@/lib/axios";
 
 const appId = process.env.EXPO_PUBLIC_APP_ID;
-const channelName = "main";
-const userId = Math.floor(Math.random() * 10_000_000);
+const channelName = "main" as const;
+const uid = Math.floor(Math.random() * 10_000_000);
+const tempToken =
+  "007eJxTYIjJnrhm0gSZeQcvWpkV5r40XOF1xde6MT9Y//SOTSXnzkxUYDAwMkw2NTFIM002TTRJMzayNE1OMjc2SzM2SzYzNDROW3nzZFpDICOD5dFyZkYGCATxWRhyEzPzGBgAhVIggQ==";
 
 const initialState = {
   joinChannel: () => {},
@@ -25,9 +27,11 @@ const initialState = {
   otherJoinee: [] as number[],
   isJoined: false,
   message: "",
-  userId,
+  uid,
   loading: false,
 };
+
+const getUniqueValues = (arr: number[]) => Array.from(new Set(arr));
 
 export const agoraContext = createContext(initialState);
 
@@ -58,11 +62,13 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
         onError: (_, err) => setMessage(err),
         onUserJoined: (_, uid) => {
           setMessage(`User ${uid} has joined`);
-          setOtherJoinee((prev) => [...prev, uid]);
+          setOtherJoinee((prev) => getUniqueValues([...prev, uid]));
         },
         onUserOffline: (_, uid) => {
           setMessage(`User ${uid} has left`);
-          setOtherJoinee((prev) => prev.filter((id) => id != uid));
+          setOtherJoinee((prev) =>
+            getUniqueValues(prev.filter((id) => id != uid))
+          );
         },
       });
 
@@ -82,13 +88,15 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
         ChannelProfileType.ChannelProfileLiveBroadcasting
       );
 
-      const { data: token, error } = await getAgoraToken(userId);
+      const { data, error } = await getAgoraToken(uid);
       if (error) return setMessage(error);
 
-      agoraEngineRef.current?.joinChannel(token, channelName, userId, {
+      const token = data.token;
+
+      agoraEngineRef.current?.joinChannel(tempToken, channelName, uid, {
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
       });
-      setOtherJoinee((prev) => [...prev, userId]);
+      setOtherJoinee((prev) => getUniqueValues([...prev, uid]));
       setIsJoined(true);
       setMessage(`Successfully joined ${channelName}`);
     } catch (err: any) {
@@ -122,7 +130,7 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
         leaveChannel,
         message,
         otherJoinee,
-        userId,
+        uid,
         loading,
       }}
     >
