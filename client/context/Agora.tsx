@@ -13,9 +13,9 @@ import createAgoraRtcEngine, {
 } from "react-native-agora";
 
 import { getAudioPermission } from "@/utils/permissions";
+import { getAgoraToken } from "@/lib/axios";
 
 const appId = process.env.EXPO_PUBLIC_APP_ID;
-const token = process.env.EXPO_PUBLIC_AGORA_TOKEN!;
 const channelName = "main";
 const userId = Math.floor(Math.random() * 10_000_000);
 
@@ -67,27 +67,30 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
       agoraEngine.initialize({
         appId,
       });
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
-      // @ts-ignore
       setMessage(err.message);
     }
   };
 
-  const joinChannel = () => {
+  const joinChannel = async () => {
     try {
       agoraEngineRef.current?.setChannelProfile(
         ChannelProfileType.ChannelProfileLiveBroadcasting
       );
+
+      const { data: token, error } = await getAgoraToken(userId);
+      if (error) return setMessage(error);
+      if (token) console.log(token);
+
       agoraEngineRef.current?.joinChannel(token, channelName, userId, {
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
       });
       setOtherJoinee((prev) => [...prev, userId]);
       setIsJoined(true);
       setMessage(`Successfully joined ${channelName}`);
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
-      // @ts-ignore
       setMessage(err.message);
     }
   };
@@ -98,9 +101,8 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
       setOtherJoinee([]);
       setIsJoined(false);
       setMessage("You Left the channel");
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
-      // @ts-ignore
       setMessage(err.message);
     }
   };
