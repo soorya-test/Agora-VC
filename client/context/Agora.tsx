@@ -84,7 +84,6 @@ export const AgoraProvider = ({ children }: PropsWithChildren) => {
 
       const { data: token, error } = await getAgoraToken(userId);
       if (error) return setMessage(error);
-      if (token) console.log(token);
 
       agoraEngineRef.current?.joinChannel(token, channelName, userId, {
         clientRoleType: ClientRoleType.ClientRoleBroadcaster,
